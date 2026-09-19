@@ -1,25 +1,16 @@
 name: Build Google Play AAB
 
 on:
-  workfname: Build Google Play AAB
-
-on:
   workflow_dispatch:
     inputs:
       keystore_password:
-        description: "Mot de passe du keystore (a conserver)"
-        required: true
-        type: string
-      key_password:
-        description: "Mot de passe de la cle (a conserver)"
+        description: "Mot de passe du keystore"
         required: true
         type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
       - name: Recuperer le projet
@@ -31,7 +22,7 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Installer Gradle 8.13
+      - name: Installer Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
@@ -39,10 +30,8 @@ jobs:
       - name: Creer la cle de signature
         env:
           STORE_PASS: ${{ inputs.keystore_password }}
-          KEY_PASS: ${{ inputs.key_password }}
         run: |
           keytool -genkeypair \
-            -v \
             -keystore beuhbeuh48-release.jks \
             -storetype PKCS12 \
             -storepass "$STORE_PASS" \
@@ -53,19 +42,17 @@ jobs:
             -validity 10000 \
             -dname "CN=BEUHBEUH48, OU=Mobile, O=BEUHBEUH48, L=Paris, ST=Ile-de-France, C=FR"
 
-      - name: Compiler le bundle Release
+      - name: Compiler AAB
         run: gradle :app:bundleRelease
 
-      - name: Preparer le fichier AAB
-        run: |
-          cp app/build/outputs/bundle/release/app-release.aab BEUHBEUH48-v1.aab
+      - name: Preparer AAB
+        run: cp app/build/outputs/bundle/release/app-release.aab BEUHBEUH48-v1.aab
 
-      - name: Signer le fichier AAB
+      - name: Signer AAB
         env:
           STORE_PASS: ${{ inputs.keystore_password }}
         run: |
-          jarsigner \
-            -verbose \
+          jarsigner -verbose \
             -sigalg SHA256withRSA \
             -digestalg SHA-256 \
             -keystore beuhbeuh48-release.jks \
@@ -74,18 +61,17 @@ jobs:
             BEUHBEUH48-v1.aab \
             beuhbeuh48
 
-      - name: Verifier la signature
-        run: jarsigner -verify -verbose -certs BEUHBEUH48-v1.aab
+      - name: Verifier signature
+        run: jarsigner -verify BEUHBEUH48-v1.aab
 
-      - name: Fichier AAB Google Play
+      - name: Publier AAB
         uses: actions/upload-artifact@v4
         with:
           name: BEUHBEUH48-Google-Play-AAB
           path: BEUHBEUH48-v1.aab
 
-      - name: Cle de signature A CONSERVER
+      - name: Sauvegarder cle de signature
         uses: actions/upload-artifact@v4
         with:
-          name: BEUHBEUH48-SIGNING-KEY-KEEP-SAFE
+          name: BEUHBEUH48-SIGNING-KEY
           path: beuhbeuh48-release.jks
-    
