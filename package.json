@@ -1,0 +1,9 @@
+{
+  "name": "beuhbeuh48",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/engine.test.mjs && node tests/meta.test.mjs && node tests/shop.test.mjs && node tests/source.test.mjs && node tests/project.test.mjs",
+    "test:ui": "node tests/ui.test.mjs"
+  }
+}

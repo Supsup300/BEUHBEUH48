@@ -2,6 +2,11 @@ plugins {
     id 'com.android.application'
 }
 
+def envOrDefault = { String name, String fallback ->
+    def value = System.getenv(name)
+    return (value != null && !value.trim().isEmpty()) ? value.trim() : fallback
+}
+
 android {
     namespace 'com.beuhbeuh48.game'
     compileSdk 36
@@ -10,14 +15,46 @@ android {
         applicationId 'com.beuhbeuh48.game'
         minSdk 24
         targetSdk 36
-        versionCode 1
-        versionName '1.0.0'
+        versionCode 4
+        versionName '2.1.1'
+
+        manifestPlaceholders = [
+            admobAppId: envOrDefault('BEUHBEUH48_ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')
+        ]
+
+        buildConfigField 'String', 'ADMOB_REWARDED_ID', '"' + envOrDefault('BEUHBEUH48_ADMOB_REWARDED_ID', 'ca-app-pub-3940256099942544/5224354917') + '"'
+        buildConfigField 'String', 'ADMOB_INTERSTITIAL_ID', '"' + envOrDefault('BEUHBEUH48_ADMOB_INTERSTITIAL_ID', 'ca-app-pub-3940256099942544/1033173712') + '"'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    signingConfigs {
+        release {
+            def keyPath = System.getenv('BEUHBEUH48_KEYSTORE_PATH')
+            if (keyPath) {
+                storeFile file(keyPath)
+                storePassword System.getenv('BEUHBEUH48_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('BEUHBEUH48_KEY_ALIAS') ?: 'beuhbeuh48'
+                keyPassword System.getenv('BEUHBEUH48_KEY_PASSWORD')
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
+            if (System.getenv('BEUHBEUH48_KEYSTORE_PATH')) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads:25.5.0'
+    implementation 'androidx.webkit:webkit:1.14.0'
 }

@@ -1,29 +1,42 @@
-BEUHBEUH48 — Projet Android prêt à compiler pour Google Play
+BEUHBEUH48 V2.1 — Livraison Google Play
 
-Ce projet encapsule le fichier HTML original dans une WebView Android locale.
-Le jeu fonctionne hors ligne et conserve localStorage grâce au DOM Storage de WebView.
-
-CONFIGURATION
-- Application ID : com.beuhbeuh48.game
-- Version : 1.0.0 (versionCode 1)
+IDENTITÉ ANDROID CONSERVÉE
+- applicationId : com.beuhbeuh48.game
+- versionCode : 3
+- versionName : 2.1.0
 - minSdk : 24
-- targetSdk / compileSdk : 36 (Android 16)
-- Orientation : portrait
-- Nom affiché : BEUHBEUH48
+- targetSdk / compileSdk : 36
+- orientation : portrait
 
-POUR PRODUIRE LE .AAB DANS ANDROID STUDIO
-1. Installer Android Studio récent et Android SDK 36.
-2. Ouvrir le dossier BEUHBEUH48_Android_Project.
-3. Laisser Gradle synchroniser le projet.
-4. Tester sur un téléphone ou émulateur.
-5. Build > Generate Signed App Bundle or APK.
-6. Choisir Android App Bundle.
-7. Créer un nouveau keystore si c'est la première publication, puis le conserver précieusement.
-8. Choisir release et générer.
-9. Le fichier app-release.aab obtenu est celui à envoyer dans Play Console.
+BUILD RECOMMANDÉ : GITHUB ACTIONS
+Le workflow .github/workflows/build-play-aab.yml compile, signe, vérifie puis publie
+l'artefact BEUHBEUH48-V2-Google-Play-AAB.
 
-IMPORTANT
-- Ne perdez jamais le keystore / mot de passe de signature.
-- Avant publication, testez le jeu sur plusieurs tailles d'écran Android.
-- Google Play demande aussi une fiche Store, une icône 512x512, des captures d'écran,
-  une classification du contenu et les déclarations de sécurité des données.
+La clé d'upload V1 doit impérativement être réutilisée. Le workflow V1 l'avait publiée
+dans l'artefact GitHub « BEUHBEUH48-KEYSTORE-A-CONSERVER » sous le nom
+BEUHBEUH48-upload.jks. Ne générez jamais une nouvelle clé pour cette mise à jour.
+
+Secrets GitHub à configurer :
+- BEUHBEUH48_KEYSTORE_BASE64 : contenu Base64 du fichier BEUHBEUH48-upload.jks
+- BEUHBEUH48_KEYSTORE_PASSWORD : mot de passe du keystore V1
+- BEUHBEUH48_KEY_PASSWORD : mot de passe de la clé V1
+
+Commande Linux pour créer la valeur Base64 :
+  base64 -w 0 BEUHBEUH48-upload.jks
+
+Sur macOS :
+  base64 < BEUHBEUH48-upload.jks | tr -d '\n'
+
+ADMOB
+La V2 utilise uniquement les identifiants de test officiels Google pendant le
+développement :
+- App ID test : ca-app-pub-3940256099942544~3347511713
+- Rewarded test : ca-app-pub-3940256099942544/5224354917
+- Interstitial test : ca-app-pub-3940256099942544/1033173712
+
+Avant production :
+1. Remplacer ces trois IDs par ceux de l'application AdMob BEUHBEUH48.
+2. Configurer le consentement utilisateurs requis dans l'EEE/Royaume-Uni.
+3. Vérifier la section Sécurité des données et la politique de confidentialité.
+4. Lancer le workflow, télécharger BEUHBEUH48-v2.1.0-code3.aab et l'envoyer en test interne.
+5. Ne jamais committer le keystore ni les mots de passe.
