@@ -57,6 +57,22 @@ jobs:
       - name: Verifier signature
         run: jarsigner -verify BEUHBEUH48-v1.aab
 
+              - name: Exporter certificat PEM pour Google Play
+        env:
+          STORE_PASS: ${{ inputs.keystore_password }}
+        run: |
+          keytool -export -rfc \
+            -keystore beuhbeuh48-release.jks \
+            -storepass "$STORE_PASS" \
+            -alias beuhbeuh48 \
+            -file upload_certificate.pem
+
+      - name: Publier certificat PEM
+        uses: actions/upload-artifact@v4
+        with:
+          name: BEUHBEUH48-upload-certificate
+          path: upload_certificate.pem
+
       - name: Publier AAB
         uses: actions/upload-artifact@v4
         with:
