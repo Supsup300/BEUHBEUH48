@@ -27,23 +27,16 @@ jobs:
         with:
           gradle-version: "8.13"
 
-      - name: Creer la cle de signature
+      - name: Restaurer la bonne cle de signature
         env:
-          STORE_PASS: ${{ inputs.keystore_password }}
+          KEYSTORE_BASE64: ${{ secrets.BEUHBEUH48_KEYSTORE_BASE64 }}
         run: |
-          keytool -genkeypair \
-            -keystore beuhbeuh48-release.jks \
-            -storetype PKCS12 \
-            -storepass "$STORE_PASS" \
-            -alias beuhbeuh48 \
-            -keypass "$STORE_PASS" \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -dname "CN=BEUHBEUH48, OU=Mobile, O=BEUHBEUH48, L=Paris, ST=Ile-de-France, C=FR"
+          echo "$KEYSTORE_BASE64" | base64 --decode > beuhbeuh48-release.jks
 
       - name: Compiler AAB
         run: gradle :app:bundleRelease
+
+
 
       - name: Preparer AAB
         run: cp app/build/outputs/bundle/release/app-release.aab BEUHBEUH48-v1.aab
@@ -70,8 +63,3 @@ jobs:
           name: BEUHBEUH48-Google-Play-AAB
           path: BEUHBEUH48-v1.aab
 
-      - name: Sauvegarder cle de signature
-        uses: actions/upload-artifact@v4
-        with:
-          name: BEUHBEUH48-SIGNING-KEY
-          path: beuhbeuh48-release.jks
