@@ -57,7 +57,7 @@ jobs:
       - name: Verifier signature
         run: jarsigner -verify BEUHBEUH48-v1.aab
 
-              - name: Exporter certificat PEM pour Google Play
+      - name: Exporter certificat PEM pour Google Play
         env:
           STORE_PASS: ${{ inputs.keystore_password }}
         run: |
