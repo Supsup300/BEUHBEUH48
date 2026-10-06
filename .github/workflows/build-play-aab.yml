@@ -78,4 +78,21 @@ jobs:
         with:
           name: BEUHBEUH48-Google-Play-AAB
           path: BEUHBEUH48-v1.aab
+      - name: Compiler APK de test
+        run: gradle :app:assembleRelease
 
+      - name: Signer APK de test
+        run: |
+          $ANDROID_HOME/build-tools/36.0.0/apksigner sign \
+            --ks beuhbeuh48-release.jks \
+            --ks-key-alias beuhbeuh48 \
+            --ks-pass pass:"${{ github.event.inputs.keystore_password }}" \
+            --key-pass pass:"${{ github.event.inputs.keystore_password }}" \
+            --out BEUHBEUH48-2.1.1-TEST.apk \
+            app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Publier APK de test
+        uses: actions/upload-artifact@v4
+        with:
+          name: BEUHBEUH48-APK-TEST-2.1.1
+          path: BEUHBEUH48-2.1.1-TEST.apk
