@@ -19,11 +19,11 @@ android {
         versionName '2.1.1'
 
         manifestPlaceholders = [
-            admobAppId: envOrDefault('BEUHBEUH48_ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')
+            admobAppId: envOrDefault('BEUHBEUH48_ADMOB_APP_ID', 'ca-app-pub-6035067894119408~3179735597')
         ]
 
-        buildConfigField 'String', 'ADMOB_REWARDED_ID', '"' + envOrDefault('BEUHBEUH48_ADMOB_REWARDED_ID', 'ca-app-pub-3940256099942544/5224354917') + '"'
-        buildConfigField 'String', 'ADMOB_INTERSTITIAL_ID', '"' + envOrDefault('BEUHBEUH48_ADMOB_INTERSTITIAL_ID', 'ca-app-pub-3940256099942544/1033173712') + '"'
+        buildConfigField 'String', 'ADMOB_REWARDED_ID', '"' + envOrDefault('BEUHBEUH48_ADMOB_REWARDED_ID', 'ca-app-pub-6035067894119408/5726007883') + '"'
+        buildConfigField 'String', 'ADMOB_INTERSTITIAL_ID', '"' + envOrDefault('BEUHBEUH48_ADMOB_INTERSTITIAL_ID', 'ca-app-pub-6035067894119408/6544265533') + '"'
     }
 
     buildFeatures {
